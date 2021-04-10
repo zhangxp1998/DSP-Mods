@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace DSP_Mods.SphereProgress
+namespace DysonSphereSave
 {
     [Serializable]
     class DysonSphereStructure

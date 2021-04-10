@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using FullSerializer;
 
-namespace DSP_Mods.SphereProgress
+namespace DysonSphereSave
 {
     public static class DysonSphereUtils
     {
@@ -137,24 +137,16 @@ namespace DSP_Mods.SphereProgress
                     }
                 }
             }
-            /*
-            dysonSphere.CheckAutoNodes();
-            dysonSphere.ArrangeAutoNodes();
-            for(int i = 0; i < dysonSphere.autoNodes.Length; i++)
-            {
-                dysonSphere.PickAutoNode();
-            }
-            */
         }
+        public const string GUID = "org.zhangxp1998.plugins.dysonspheresave";
     }
-
-    [BepInPlugin("org.fezeral.plugins.sphereprogress", "Sphere Progress Plug-In", "1.0.0.1")]
+    [BepInPlugin(DysonSphereUtils.GUID, "Dyson Sphere Save Plug-In", "1.2.0.0")]
     class SphereProgress : BaseUnityPlugin
     {
         Harmony harmony;
         internal void Awake()
         {
-            harmony = new Harmony("org.fezeral.plugins.sphereprogress");
+            harmony = new Harmony(DysonSphereUtils.GUID);
             harmony.PatchAll(typeof(PatchSphereProgress));
         }
         internal void OnDestroy()
@@ -227,10 +219,20 @@ namespace DSP_Mods.SphereProgress
             }
             public static void ImportStructure(DysonSphere dysonSphere, string dysonSphereData)
             {
-                var deserializer = new fsSerializer();
-                fsData data = fsJsonParser.Parse(dysonSphereData);
                 var structure = new DysonSphereStructure();
-                deserializer.TryDeserialize(data, ref structure).AssertSuccessWithoutWarnings();
+                try
+                {
+                    var deserializer = new fsSerializer();
+                    fsData data = fsJsonParser.Parse(dysonSphereData);
+                    if (!deserializer.TryDeserialize(data, ref structure).Succeeded)
+                    {
+                        return;
+                    }
+                } catch (Exception e)
+                {
+                    System.Console.WriteLine(e.StackTrace);
+                    return;
+                }
                 RemoveAllLayers(dysonSphere);
 
                 int nodeCount = 0;
@@ -302,7 +304,7 @@ namespace DSP_Mods.SphereProgress
                 if (Input.GetKeyDown(KeyCode.L))
                 {
                     ImportStructure(__instance.viewDysonSphere, GUIUtility.systemCopyBuffer);
-                    UIRealtimeTip.Popup("Imported dyson sphere data from clipboard!");
+                    UIRealtimeTip.PopupAhead("Imported dyson sphere data from clipboard!");
                     System.Console.WriteLine("Imported dyson sphere data from clipboard!");
                 }
                 var dysonSphere = __instance.viewDysonSphere;
@@ -310,7 +312,7 @@ namespace DSP_Mods.SphereProgress
                 {
                     string data = ExportStructure(dysonSphere);
                     GUIUtility.systemCopyBuffer = data;
-                    UIRealtimeTip.Popup("Exported dyson sphere data to clipboard!");
+                    UIRealtimeTip.PopupAhead("Exported dyson sphere data to clipboard!");
                     System.Console.WriteLine("Exported dyson sphere data to clipboard!");
                     using (StreamWriter outputFile = new StreamWriter(DSP_SAVE_PATH))
                     {
