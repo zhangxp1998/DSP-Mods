@@ -1,0 +1,9 @@
+﻿{
+  "name": "DysonSphereSave",
+  "version_number": "1.2.2",
+  "website_url": "https://github.com/zhangxp1998/DSP-Mods",
+  "description": "Allows you to save/load dyson sphere blueprints",
+  "dependencies": [
+    "xiaoye97-BepInEx-5.4.5"
+  ]
+}

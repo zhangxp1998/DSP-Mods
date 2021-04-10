@@ -140,7 +140,7 @@ namespace DysonSphereSave
         }
         public const string GUID = "org.zhangxp1998.plugins.dysonspheresave";
     }
-    [BepInPlugin(DysonSphereUtils.GUID, "Dyson Sphere Save Plug-In", "1.2.0.0")]
+    [BepInPlugin(DysonSphereUtils.GUID, "Dyson Sphere Save Plug-In", "1.2.2.0")]
     class SphereProgress : BaseUnityPlugin
     {
         Harmony harmony;
