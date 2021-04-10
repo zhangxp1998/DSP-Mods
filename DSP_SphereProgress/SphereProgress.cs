@@ -294,6 +294,8 @@ namespace DSP_Mods.SphereProgress
                 }
             }
             internal static GameObject cellValue, cellLabel, structValue, structLabel;
+            internal static bool complteSphere = false;
+
             [HarmonyPostfix, HarmonyPatch(typeof(UIDysonPanel), "_OnUpdate")]
             public static void UIDysonPanel_OnUpdate_Postfix(UIDysonPanel __instance)
             {
@@ -317,19 +319,11 @@ namespace DSP_Mods.SphereProgress
                 }
                 if (Input.GetKeyDown(KeyCode.P))
                 {
-                    if (dysonSphere != null)
-                    {
-                        for (int i = 0; i < dysonSphere.layersIdBased.Length; i ++)
-                        {
-                            var layer = dysonSphere.layersIdBased[i];
-                            if (layer == null || layer.id != i)
-                            {
-                                continue;
-                            }
-                            System.Console.WriteLine($"Completing layer {i}");
-                            CompleteSphere.CompleteLayer(layer);
-                        }
-                    }
+                    complteSphere = !complteSphere;
+                }
+                if (complteSphere)
+                {
+                    buildSphere(dysonSphere);
                 }
                 if (cellValue != null)
                 {
@@ -360,6 +354,27 @@ namespace DSP_Mods.SphereProgress
                     {
                         structValue.GetComponentInChildren<Text>().text = "-";
                         cellValue.GetComponentInChildren<Text>().text = "-";
+                    }
+                }
+            }
+            public static void buildSphere(DysonSphere dysonSphere)
+            {
+                if (dysonSphere != null)
+                {
+                    for (int i = 0; i < dysonSphere.layersIdBased.Length; i++)
+                    {
+                        var layer = dysonSphere.layersIdBased[i];
+                        if (layer == null || layer.id != i)
+                        {
+                            continue;
+                        }
+                        // System.Console.WriteLine($"Completing layer {i}");
+                        CompleteSphere.CompleteLayer(layer, 1.0f/60.0f/60.0f/2.0f);
+                        // CompleteSphere.CompleteLayer(layer, 1.0f);
+                    }
+                    if (dysonSphere.totalCellPoint == dysonSphere.totalConstructedCellPoint && dysonSphere.totalStructurePoint == dysonSphere.totalConstructedStructurePoint)
+                    {
+                        complteSphere = false;
                     }
                 }
             }

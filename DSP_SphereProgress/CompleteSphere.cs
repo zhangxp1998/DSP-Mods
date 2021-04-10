@@ -7,40 +7,25 @@ namespace DSP_Mods.SphereProgress
 {
     class CompleteSphere
     {
-        public static void CompleteLayer(DysonSphereLayer layer)
+        public static void CompleteLayer(DysonSphereLayer layer, float percent = 0.1f)
         {
-            for (int i = 1; i < layer.nodeCursor; i++)
+            foreach (var node in DysonSphereUtils.GetNodes(layer))
             {
-                var node = layer.nodePool[i];
-                if (node == null || node.id != i)
+                int spRequired = Math.Min((int)Math.Ceiling(node.totalSpMax * percent), node.spReqOrder);
+                for (int j = 0; j < spRequired; j++)
                 {
-                    continue;
+                    // layer.dysonSphere.OrderConstructSp(node);
+                    layer.dysonSphere.ConstructSp(node);
                 }
-                int cpRequired = node.cpReqOrder;
+            }
+            foreach (var node in DysonSphereUtils.GetNodes(layer))
+            {
+                int cpRequired = Math.Min((int)Math.Ceiling(node.totalCpMax * percent), node.cpReqOrder);
                 for (int j = 0; j < cpRequired; j++)
                 {
                     node.ConstructCp();
                 }
-                int spRequired = node.spReqOrder;
-                for (int j = 0; j < spRequired; j++)
-                {
-                    node.OrderConstructSp();
-                }
             }
-            /*
-            for (int i = 1; i < layer.shellCursor; i++)
-            {
-                var shell = layer.shellPool[i];
-                if (shell == null || shell.id != i)
-                {
-                    continue;
-                }
-                for (int j = 0; j < shell.nodecps.Length; j++)
-                {
-                    shell.nodecps[j] = 2;
-                }
-            }
-            */
         }
     }
 }
