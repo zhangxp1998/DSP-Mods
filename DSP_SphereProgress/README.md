@@ -11,6 +11,7 @@ Adds progress information to the Dyson Sphere UI screen
 
 ## Dyson Sphere Blueprint
 Press 'S' to save the Dyson Sphere to clipboard, press 'L' to load Dyson Sphere from clipboard. Press 'P' to complete your sphere. When you save/load, no in game notification is sent. Your sphere's data will be silently copied to clipboard.
+Loading will only load the design of Dyson Sphere, **loaded sphere will be empty**. **When loading, this mod will also dismantle your current sphere** to avoid any conflicts.
 
 ![Sphere Progress Demo](https://github.com/zhangxp1998/DSP-Mods/blob/main/DSP_SphereProgress/sphereprogress.png?raw=true)
 ![Dyson Sphere Save](https://github.com/zhangxp1998/DSP-Mods/blob/main/DSP_SphereProgress/dysonspheresave.gif?raw=true)
