@@ -220,6 +220,7 @@ namespace DysonSphereSave
                 {
                     var deserializer = new fsSerializer();
                     fsData data = fsJsonParser.Parse(dysonSphereData);
+                    fsSerializer.StripDeserializationMetadata(ref data);
                     if (!deserializer.TryDeserialize(data, ref structure).Succeeded)
                     {
                         return;
