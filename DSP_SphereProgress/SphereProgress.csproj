@@ -90,6 +90,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(TargetDir)\$(TargetName).dll','$(TargetDir)\FullSerializer.dll','$(TargetDir)\icon.png','$(TargetDir)\manifest.json','$(TargetDir)\README.md' -DestinationPath '$(SolutionDir)\PublishOutput\$(TargetName).zip' -Force)</PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(TargetDir)\$(TargetName).dll','$(TargetDir)\FullSerializer.dll','$(TargetDir)\icon.png','$(TargetDir)\manifest.json','$(TargetDir)\README.md' -DestinationPath '$(SolutionDir)\PublishOutput\$(TargetName).zip' -Force)
+
+if $(ConfigurationName) == Debug (xcopy "$(TargetDir)$(TargetName).dll" "C:\Program Files (x86)\Steam\steamapps\common\Dyson Sphere Program\BepInEx\plugins\zhangxp1998-DysonSphereSave" /E /Y /C)</PostBuildEvent>
   </PropertyGroup>
 </Project>
