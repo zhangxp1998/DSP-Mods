@@ -13,6 +13,7 @@ Adds progress information to the Dyson Sphere UI screen
 Press 'S' to save the Dyson Sphere to clipboard, press 'L' to load Dyson Sphere from clipboard. Press 'P' to complete your sphere. When you save/load, no in game notification is sent. Your sphere's data will be silently copied to clipboard.
 
 ![Sphere Progress Demo](DSP_SphereProgress/sphereprogress.png)
+![Dyson Sphere Save](DSP_SphereProgress/dysonspheresave.gif)
 
 ## Installation Instructions
 Download and install BepInEx into steamapps/common/Dyson Sphere Program: https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html?tabs=tabid-win
