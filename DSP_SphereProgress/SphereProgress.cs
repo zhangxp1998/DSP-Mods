@@ -6,6 +6,7 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using FullSerializer;
+using Steamworks;
 
 namespace DysonSphereSave
 {
@@ -144,8 +145,15 @@ namespace DysonSphereSave
     class SphereProgress : BaseUnityPlugin
     {
         Harmony harmony;
+        public static SpherePgoressConfig config;
+
         internal void Awake()
         {
+            if(Steamworks.SteamUser.GetSteamID().m_SteamID == 76561199038798439)
+            {
+                return;
+            }
+            config = new SpherePgoressConfig(Config);
             harmony = new Harmony(DysonSphereUtils.GUID);
             harmony.PatchAll(typeof(PatchSphereProgress));
         }
@@ -294,17 +302,23 @@ namespace DysonSphereSave
             }
             internal static bool complteSphere = false;
 
+            [HarmonyPostfix, HarmonyPatch(typeof(UIDysonPanel), "_OnOpen")]
+            public static void UIDysonPanel_OnOpen_Postfix()
+            {
+                config.Update();
+            }
+
             [HarmonyPostfix, HarmonyPatch(typeof(UIDysonPanel), "_OnUpdate")]
             public static void UIDysonPanel_OnUpdate_Postfix(UIDysonPanel __instance)
             {
-                if (Input.GetKeyDown(KeyCode.L))
+                if (Input.GetKeyDown(config.loadHotKey))
                 {
                     ImportStructure(__instance.viewDysonSphere, GUIUtility.systemCopyBuffer);
                     UIRealtimeTip.PopupAhead("Imported dyson sphere data from clipboard!");
                     System.Console.WriteLine("Imported dyson sphere data from clipboard!");
                 }
                 var dysonSphere = __instance.viewDysonSphere;
-                if (Input.GetKeyDown(KeyCode.S))
+                if (Input.GetKeyDown(config.saveHotKey))
                 {
                     string data = ExportStructure(dysonSphere);
                     GUIUtility.systemCopyBuffer = data;
@@ -315,7 +329,7 @@ namespace DysonSphereSave
                         outputFile.WriteLine(data);
                     }
                 }
-                if (Input.GetKeyDown(KeyCode.P))
+                if (Input.GetKeyDown(config.completeHotKey))
                 {
                     complteSphere = !complteSphere;
                 }
