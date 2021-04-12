@@ -19,8 +19,8 @@ namespace DysonSphereSave
         public SpherePgoressConfig(ConfigFile Config)
         {
             saveKeyCode = Config.Bind<KeyCode>("DysonSphereSave", "saveKeyCode", KeyCode.S, "Hot key to save a dyson sphere");
-            loadKeyCode = Config.Bind<KeyCode>("DysonSphereSave", "loadKeyCode", KeyCode.S, "Hot key to load a dyson sphere");
-            completeKeyCode = Config.Bind<KeyCode>("DysonSphereSave", "loadKeyCode", KeyCode.S, "Hot key to complete a dyson sphere");
+            loadKeyCode = Config.Bind<KeyCode>("DysonSphereSave", "loadKeyCode", KeyCode.L, "Hot key to load a dyson sphere");
+            completeKeyCode = Config.Bind<KeyCode>("DysonSphereSave", "completeKeyCode", KeyCode.P, "Hot key to complete a dyson sphere");
         }
         public void Update()
         {

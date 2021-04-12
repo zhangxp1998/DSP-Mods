@@ -26,6 +26,10 @@ Add dll file to steamapps/common/Dyson Sphere Program/BepInEx/plugins
 
 Launch the game and the mod should be loaded
 
+## Changelog
+### 1.2.4
+Allow hotkeys to be rebind via config.
+
 ### Acknowledgements
 
 All trademarks, copyright, and resources related to Dyson Sphere Project itself, remain the property of Gamera Game and Youthcat Studio as applicable according to the license agreement distributed with Dyson Sphere Program.
