@@ -306,6 +306,7 @@ namespace DysonSphereSave
             public static void UIDysonPanel_OnOpen_Postfix()
             {
                 config.Update();
+                System.Console.WriteLine($"Save: {config.saveHotKey}, Load: {config.loadHotKey}, compelte: {config.completeHotKey}");
             }
 
             [HarmonyPostfix, HarmonyPatch(typeof(UIDysonPanel), "_OnUpdate")]

@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SphereProgress", "DSP_Spher
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeMode", "CreativeMode\CreativeMode.csproj", "{402CB1C4-A303-4AC0-9F8C-E1104CEFC59A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SteamLib", "SteamLib\SteamLib.vcxproj", "{BC647337-41EC-4AEA-8FC5-8B2F4295B9FE}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,16 +41,6 @@ Global
 		{402CB1C4-A303-4AC0-9F8C-E1104CEFC59A}.Release|x64.Build.0 = Release|Any CPU
 		{402CB1C4-A303-4AC0-9F8C-E1104CEFC59A}.Release|x86.ActiveCfg = Release|Any CPU
 		{402CB1C4-A303-4AC0-9F8C-E1104CEFC59A}.Release|x86.Build.0 = Release|Any CPU
-		{BC647337-41EC-4AEA-8FC5-8B2F4295B9FE}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{BC647337-41EC-4AEA-8FC5-8B2F4295B9FE}.Debug|x64.ActiveCfg = Debug|x64
-		{BC647337-41EC-4AEA-8FC5-8B2F4295B9FE}.Debug|x64.Build.0 = Debug|x64
-		{BC647337-41EC-4AEA-8FC5-8B2F4295B9FE}.Debug|x86.ActiveCfg = Debug|Win32
-		{BC647337-41EC-4AEA-8FC5-8B2F4295B9FE}.Debug|x86.Build.0 = Debug|Win32
-		{BC647337-41EC-4AEA-8FC5-8B2F4295B9FE}.Release|Any CPU.ActiveCfg = Release|Win32
-		{BC647337-41EC-4AEA-8FC5-8B2F4295B9FE}.Release|x64.ActiveCfg = Release|x64
-		{BC647337-41EC-4AEA-8FC5-8B2F4295B9FE}.Release|x64.Build.0 = Release|x64
-		{BC647337-41EC-4AEA-8FC5-8B2F4295B9FE}.Release|x86.ActiveCfg = Release|Win32
-		{BC647337-41EC-4AEA-8FC5-8B2F4295B9FE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
