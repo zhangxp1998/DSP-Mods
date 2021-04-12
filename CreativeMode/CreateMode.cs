@@ -26,7 +26,7 @@ namespace CreativeMode
         }
         internal void Update()
         {
-            if (Input.GetKeyDown(KeyCode.R)) 
+            if (Input.GetKeyDown(KeyCode.I)) 
             {
                 creativeModeEnabled = !creativeModeEnabled;
                 if (creativeModeEnabled)
