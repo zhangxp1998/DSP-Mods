@@ -13,6 +13,7 @@ namespace DysonSphereSave
         private ConfigEntry<KeyCode> saveKeyCode;
         private ConfigEntry<KeyCode> loadKeyCode;
         private ConfigEntry<KeyCode> completeKeyCode;
+        private ConfigEntry<bool> overwriteSphere;
         public KeyCode saveHotKey;
         public KeyCode loadHotKey;
         public KeyCode completeHotKey;
@@ -21,6 +22,7 @@ namespace DysonSphereSave
             saveKeyCode = Config.Bind<KeyCode>("DysonSphereSave", "saveKeyCode", KeyCode.S, "Hot key to save a dyson sphere");
             loadKeyCode = Config.Bind<KeyCode>("DysonSphereSave", "loadKeyCode", KeyCode.L, "Hot key to load a dyson sphere");
             completeKeyCode = Config.Bind<KeyCode>("DysonSphereSave", "completeKeyCode", KeyCode.P, "Hot key to complete a dyson sphere");
+            overwriteSphere = Config.Bind<bool>("DysonSphereSave", "overwriteSphere", true, "Whether or not to overwrite existing sphere on load");
         }
         public void Update()
         {

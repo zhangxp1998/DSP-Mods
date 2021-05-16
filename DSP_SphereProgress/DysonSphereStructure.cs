@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FullSerializer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,17 +7,49 @@ using UnityEngine;
 namespace DysonSphereSave
 {
     [Serializable]
-    class DysonSphereStructure
+    public class DysonSphereStructure
     {
-        public IList<DysonLayerStructure> layers { get; set; }
+        // Convert old style IList<T> deserialized data to raw array deserialized data
+        public static fsData Convert(fsData data)
+        {
+            if (data.IsDictionary)
+            {
+                var map = data.AsDictionary;
+                if (map.ContainsKey("$content"))
+                {
+                    System.Console.WriteLine("Converted " + map["$type"]);
+                    return Convert(map["$content"]);
+                }
+                foreach (var key in new List<string>(map.Keys))
+                {
+                    map[key] = Convert(map[key]);
+                }
+                return data;
+            }
+            else if (data.IsList)
+            {
+                var list = data.AsList;
+                for (int i = 0; i < list.Count; i++)
+                {
+                    list[i] = Convert(list[i]);
+                }
+                return data;
+            }
+            return data;
+        }
+        public DysonLayerStructure[] layers { get; set; }
         public float minOrbitRadius { get; set; }
         public float maxOrbitRadius { get; set; }
         public float dysonLumino { get; set; }
+        public float dysonRadius { get; set; }
+        public float radius { get; set; }
+        public float physicsRadius { get; set; }
+        public float systemRadius { get; set; }
 
         public static DysonSphereStructure Create(DysonSphere obj)
         {
             var structure = new DysonSphereStructure();
-            structure.layers = new List<DysonLayerStructure>();
+            var layers = new List<DysonLayerStructure>();
             for (int i = 0; i < obj.layersIdBased.Length; i ++)
             {
                 var layer = obj.layersIdBased[i];
@@ -29,17 +62,22 @@ namespace DysonSphereSave
                     }
                     continue;
                 }
-                structure.layers.Add(DysonLayerStructure.Create(layer));
+                layers.Add(DysonLayerStructure.Create(layer));
             }
+            structure.layers = layers.ToArray();
             structure.maxOrbitRadius = obj.maxOrbitRadius;
             structure.minOrbitRadius = obj.minOrbitRadius;
             structure.dysonLumino = obj.starData.dysonLumino;
+            structure.radius = obj.starData.radius;
+            structure.dysonRadius = obj.starData.dysonRadius;
+            structure.systemRadius = obj.starData.systemRadius;
+            structure.physicsRadius = obj.starData.physicsRadius;
             return structure;
         }
 
     }
     [Serializable]
-    class DysonLayerStructure
+    public class DysonLayerStructure
     {
         public float orbitRadius { get; set; }
         public Quaternion orbitRotation { get; set; }
@@ -47,9 +85,9 @@ namespace DysonSphereSave
         public int gridMode { get; set; }
 
         public int id { get; set; }
-        public IList<DysonNodeStructure> nodes;
-        public IList<DysonFrameStructure> frames;
-        public IList<DysonShellStructure> shells;
+        public DysonNodeStructure[] nodes;
+        public DysonFrameStructure[] frames;
+        public DysonShellStructure[] shells;
 
         public static DysonLayerStructure Create(DysonSphereLayer obj)
         {
@@ -58,7 +96,7 @@ namespace DysonSphereSave
             structure.orbitAngularSpeed = obj.orbitAngularSpeed;
             structure.orbitRotation = obj.orbitRotation;
             structure.gridMode = obj.gridMode;
-            structure.nodes = new List<DysonNodeStructure>();
+            var nodes = new List<DysonNodeStructure>();
             for (int i = 0; i < obj.nodeCursor; i ++)
             {
                 var node = obj.nodePool[i];
@@ -66,9 +104,10 @@ namespace DysonSphereSave
                 {
                     continue;
                 }
-                structure.nodes.Add(DysonNodeStructure.Create(node));
+                nodes.Add(DysonNodeStructure.Create(node));
             }
-            structure.frames = new List<DysonFrameStructure>();
+            structure.nodes = nodes.ToArray();
+            var frames = new List<DysonFrameStructure>();
             for (int i = 0; i < obj.frameCursor; i++)
             {
                 var frame = obj.framePool[i];
@@ -76,9 +115,10 @@ namespace DysonSphereSave
                 {
                     continue;
                 }
-                structure.frames.Add(DysonFrameStructure.Create(frame));
+                frames.Add(DysonFrameStructure.Create(frame));
             }
-            structure.shells = new List<DysonShellStructure>();
+            structure.frames = frames.ToArray();
+            var shells = new List<DysonShellStructure>();
             for (int i = 0; i < obj.shellCursor; i++)
             {
                 var shell = obj.shellPool[i];
@@ -86,15 +126,15 @@ namespace DysonSphereSave
                 {
                     continue;
                 }
-                structure.shells.Add(DysonShellStructure.Create(shell));
+                shells.Add(DysonShellStructure.Create(shell));
             }
-
+            structure.shells = shells.ToArray();
             structure.id = obj.id;
             return structure;
         }
     }
     [Serializable]
-    class DysonNodeStructure
+    public class DysonNodeStructure
     {
         public Vector3 pos { get; set; }
         public int id { get; set; }
@@ -109,7 +149,7 @@ namespace DysonSphereSave
         }
     }
     [Serializable]
-    class DysonFrameStructure
+    public class DysonFrameStructure
     {
         public int nodeAId { get; set; }
         public int nodeBId { get; set; }
@@ -130,17 +170,17 @@ namespace DysonSphereSave
         }
     }
     [Serializable]
-    class DysonShellStructure
+    public class DysonShellStructure
     {
         public int id { get; set; }
         public int protoId { get; set; }
 
-        public IList<int> nodeIds { get; set; }
+        public int[] nodeIds { get; set; }
         public static DysonShellStructure Create(DysonShell obj)
         {
             DysonShellStructure structure = new DysonShellStructure();
 
-            structure.nodeIds = obj.nodes.ConvertAll(n => n.id);
+            structure.nodeIds = obj.nodes.ConvertAll(n => n.id).ToArray();
 
             structure.id = obj.id;
             structure.protoId = obj.protoId;

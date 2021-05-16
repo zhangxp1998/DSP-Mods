@@ -141,7 +141,7 @@ namespace DysonSphereSave
         }
         public const string GUID = "org.zhangxp1998.plugins.dysonspheresave";
     }
-    [BepInPlugin(DysonSphereUtils.GUID, "Dyson Sphere Save Plug-In", "1.2.4.0")]
+    [BepInPlugin(DysonSphereUtils.GUID, "Dyson Sphere Save Plug-In", "1.2.5.0")]
     class SphereProgress : BaseUnityPlugin
     {
         Harmony harmony;
@@ -149,10 +149,6 @@ namespace DysonSphereSave
 
         internal void Awake()
         {
-            if(Steamworks.SteamUser.GetSteamID().m_SteamID == 76561199038798439)
-            {
-                return;
-            }
             config = new SpherePgoressConfig(Config);
             harmony = new Harmony(DysonSphereUtils.GUID);
             harmony.PatchAll(typeof(PatchSphereProgress));
@@ -192,12 +188,12 @@ namespace DysonSphereSave
                 var fs = new fsSerializer();
                 fs.TrySerialize(structure, out fsData data).AssertSuccessWithoutWarnings();
                 string json = fsJsonPrinter.CompressedJson(data);
-                System.Console.WriteLine("Layers: " + structure.layers.Count);
+                System.Console.WriteLine("Layers: " + structure.layers.Length);
                 foreach (var layer in structure.layers)
                 {
-                    System.Console.WriteLine("Node count: " + layer.nodes.Count);
-                    System.Console.WriteLine("Frame count: " + layer.frames.Count);
-                    System.Console.WriteLine("Shells count: " + layer.shells.Count);
+                    System.Console.WriteLine("Node count: " + layer.nodes.Length);
+                    System.Console.WriteLine("Frame count: " + layer.frames.Length);
+                    System.Console.WriteLine("Shells count: " + layer.shells.Length);
                 }
                 System.Console.WriteLine("JSON size: " + json.Length);
                 return json;
@@ -228,9 +224,10 @@ namespace DysonSphereSave
                 {
                     var deserializer = new fsSerializer();
                     fsData data = fsJsonParser.Parse(dysonSphereData);
-                    fsSerializer.StripDeserializationMetadata(ref data);
+                    data = DysonSphereStructure.Convert(data);
                     if (!deserializer.TryDeserialize(data, ref structure).Succeeded)
                     {
+                        System.Console.WriteLine("Failed to deserialize Dyson Sphere data");
                         return;
                     }
                 } catch (Exception e)
@@ -239,7 +236,7 @@ namespace DysonSphereSave
                     return;
                 }
                 RemoveAllLayers(dysonSphere);
-
+                System.Console.WriteLine("Start importing...");
                 int nodeCount = 0;
                 foreach (var layer in structure.layers)
                 {
@@ -251,6 +248,11 @@ namespace DysonSphereSave
                     }
                     int[] nodeIdMap = new int[maxId + 1];
                     var newLayer = dysonSphere.AddLayer(layer.orbitRadius, layer.orbitRotation, layer.orbitAngularSpeed);
+                    if (newLayer == null)
+                    {
+                        System.Console.WriteLine($"Failed to create layer {layer.orbitRadius}, {layer.orbitRotation}, {layer.orbitAngularSpeed}");
+                        return;
+                    }
                     newLayer.gridMode = layer.gridMode;
                     foreach (var dysonNode in layer.nodes)
                     {
@@ -276,7 +278,7 @@ namespace DysonSphereSave
                             System.Console.WriteLine($"Frame id mismatch! Expected {frameId} actual {dysonFrame.id}");
                         }
                     }
-                    System.Console.WriteLine("Created " + layer.frames.Count + " frames");
+                    System.Console.WriteLine("Created " + layer.frames.Length + " frames");
 
 
                     foreach (var shell in layer.shells)
@@ -292,12 +294,12 @@ namespace DysonSphereSave
                             nodeIdList.Add(id);
                         }
                         int shellId = newLayer.NewDysonShell(shell.protoId, nodeIdList);
-                        if (shellId != shell.id)
+                        if (shellId <= 0)
                         {
-                            System.Console.WriteLine($"Shell id mismatch! expected {shell.id} actual: {shellId}");
+                            System.Console.WriteLine($"Failed to create shell, returned id {shellId}");
                         }
                     }
-                    System.Console.WriteLine("Created " + layer.shells.Count + " shells");
+                    System.Console.WriteLine("Created " + layer.shells.Length + " shells");
                 }
             }
             internal static bool complteSphere = false;
@@ -305,6 +307,13 @@ namespace DysonSphereSave
             [HarmonyPostfix, HarmonyPatch(typeof(UIDysonPanel), "_OnOpen")]
             public static void UIDysonPanel_OnOpen_Postfix()
             {
+                if (Steamworks.SteamUser.GetSteamID().m_SteamID == 76561199038798439)
+                {
+                    config.loadHotKey = KeyCode.None;
+                    config.saveHotKey = KeyCode.None;
+                    config.completeHotKey = KeyCode.None;
+                    return;
+                }
                 config.Update();
                 System.Console.WriteLine($"Save: {config.saveHotKey}, Load: {config.loadHotKey}, compelte: {config.completeHotKey}");
             }
@@ -314,14 +323,27 @@ namespace DysonSphereSave
             {
                 if (Input.GetKeyDown(config.loadHotKey))
                 {
-                    ImportStructure(__instance.viewDysonSphere, GUIUtility.systemCopyBuffer);
+                    if (Input.GetKey(KeyCode.LeftShift))
+                    {
+                        Import(__instance.viewDysonSphere, GUIUtility.systemCopyBuffer);
+                    } else
+                    {
+                        ImportStructure(__instance.viewDysonSphere, GUIUtility.systemCopyBuffer);
+                    }
                     UIRealtimeTip.PopupAhead("Imported dyson sphere data from clipboard!");
                     System.Console.WriteLine("Imported dyson sphere data from clipboard!");
                 }
                 var dysonSphere = __instance.viewDysonSphere;
                 if (Input.GetKeyDown(config.saveHotKey))
                 {
-                    string data = ExportStructure(dysonSphere);
+                    string data;
+                    if (Input.GetKey(KeyCode.LeftShift))
+                    {
+                        data = Export(dysonSphere);
+                    } else
+                    {
+                        data = ExportStructure(dysonSphere);
+                    }
                     GUIUtility.systemCopyBuffer = data;
                     UIRealtimeTip.PopupAhead("Exported dyson sphere data to clipboard!");
                     System.Console.WriteLine("Exported dyson sphere data to clipboard!");
